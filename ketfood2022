@@ -1,0 +1,226 @@
+using System;
+using System.Globalization;
+
+class Program
+{
+    static void Main()
+    {
+        // Въвеждане на броя на хранителните изделия
+        Console.Write("Въведете броя на хранителните изделия (0-1000): ");
+        int n = int.Parse(Console.ReadLine());
+
+        // Дефиниране на масиви за съхранение на данните
+        string[] codes = new string[n];        // Кодове на изделията
+        string[] names = new string[n];        // Имена на изделията
+        int[] quantities = new int[n];         // Количества в кг
+        int[] shelfLives = new int[n];         // Трайност в дни
+        char[] groups = new char[n];           // Група (G - нормални, S - специални)
+        string[] dates = new string[n];        // Дати на постъпване
+        string[] positions = new string[n];    // Позиции на съхранение в склада
+        double[] temperatures = new double[n]; // Температури на съхранение (за специални)
+
+        // Въвеждане на данни за всяко изделие
+        for (int i = 0; i < n; i++)
+        {
+            Console.WriteLine($"\nВъведете данни за изделие {i + 1}:");
+            
+            Console.Write("Код (до 5 знака): ");
+            codes[i] = Console.ReadLine();
+            
+            Console.Write("Име (до 60 знака): ");
+            names[i] = Console.ReadLine();
+            
+            Console.Write("Количество (кг): ");
+            quantities[i] = int.Parse(Console.ReadLine());
+            
+            Console.Write("Трайност (дни): ");
+            shelfLives[i] = int.Parse(Console.ReadLine());
+            
+            Console.Write("Група (G/S): ");
+            groups[i] = char.Parse(Console.ReadLine().ToUpper());
+            
+            Console.Write("Дата на постъпване (ДД.ММ.ГГГГ): ");
+            dates[i] = Console.ReadLine();
+            
+            Console.Write("Позиция на съхранение (до 10 знака): ");
+            positions[i] = Console.ReadLine();
+
+            // Въвеждане на температура само за специалните изделия
+            if (groups[i] == 'S')
+            {
+                Console.Write("Температура на съхранение: ");
+                temperatures[i] = double.Parse(Console.ReadLine());
+            }
+        }
+
+        // Извеждане на наличността подредена по позиция на съхранение
+        Console.WriteLine("\n2. Складова наличност (подредена по позиция):");
+        SortByPosition(n, positions, codes, names, quantities, shelfLives, groups, dates, temperatures);
+        PrintInventory(n, positions, codes, names, quantities, dates, shelfLives, groups, temperatures);
+
+        // Извеждане на специалните изделия, подредени по дата и трайност
+        Console.WriteLine("\n3. Специални изделия (подредени по дата и трайност):");
+        PrintSpecialItems(n, positions, codes, names, quantities, dates, shelfLives, groups, temperatures);
+
+        // Търсене на изделие по код
+        Console.WriteLine("\n4. Търсене на изделие по код:");
+        Console.Write("Въведете код за търсене: ");
+        string searchCode = Console.ReadLine();
+        SearchByCode(n, searchCode, positions, codes, names, quantities, dates, shelfLives, groups, temperatures);
+    }
+
+    // Функция за сортиране на изделията по позиция на съхранение
+    static void SortByPosition(int n, string[] positions, string[] codes, string[] names, 
+                              int[] quantities, int[] shelfLives, char[] groups, 
+                              string[] dates, double[] temperatures)
+    {
+        for (int i = 0; i < n - 1; i++)
+        {
+            for (int j = i + 1; j < n; j++)
+            {
+                if (string.Compare(positions[i], positions[j]) > 0)
+                {
+                    // Размяна на всички данни за изделията
+                    Swap(ref positions[i], ref positions[j]);
+                    Swap(ref codes[i], ref codes[j]);
+                    Swap(ref names[i], ref names[j]);
+                    Swap(ref quantities[i], ref quantities[j]);
+                    Swap(ref shelfLives[i], ref shelfLives[j]);
+                    Swap(ref groups[i], ref groups[j]);
+                    Swap(ref dates[i], ref dates[j]);
+                    Swap(ref temperatures[i], ref temperatures[j]);
+                }
+            }
+        }
+    }
+
+    // Функция за извеждане на списъка с всички изделия
+    static void PrintInventory(int n, string[] positions, string[] codes, string[] names, 
+                              int[] quantities, string[] dates, int[] shelfLives, 
+                              char[] groups, double[] temperatures)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            Console.Write($"{positions[i]}, {codes[i]}, {names[i]}, {quantities[i]} кг., {dates[i]}, {shelfLives[i]}");
+            if (groups[i] == 'S')
+            {
+                Console.Write($", tC={temperatures[i]:F1}");
+            }
+            Console.WriteLine();
+        }
+    }
+
+    // Функция за извеждане на специалните изделия, подредени по дата и трайност
+    static void PrintSpecialItems(int n, string[] positions, string[] codes, string[] names, 
+                                 int[] quantities, string[] dates, int[] shelfLives, 
+                                 char[] groups, double[] temperatures)
+    {
+        // Създаване на индексен масив за сортиране
+        int[] indices = new int[n];
+        int specialCount = 0;
+        
+        // Намиране на индексите на специалните изделия
+        for (int i = 0; i < n; i++)
+        {
+            if (groups[i] == 'S')
+            {
+                indices[specialCount] = i;
+                specialCount++;
+            }
+        }
+        
+        // Сортиране на специалните изделия по дата и трайност
+        for (int i = 0; i < specialCount - 1; i++)
+        {
+            for (int j = i + 1; j < specialCount; j++)
+            {
+                DateTime date1 = ParseDate(dates[indices[i]]);
+                DateTime date2 = ParseDate(dates[indices[j]]);
+                
+                // Сравняване на датите
+                if (date1 > date2)
+                {
+                    Swap(ref indices[i], ref indices[j]);
+                }
+                // Ако датите са еднакви, сортиране по трайност в намаляващ ред
+                else if (date1 == date2 && shelfLives[indices[i]] < shelfLives[indices[j]])
+                {
+                    Swap(ref indices[i], ref indices[j]);
+                }
+            }
+        }
+        
+        // Извеждане на специалните изделия
+        for (int i = 0; i < specialCount; i++)
+        {
+            int idx = indices[i];
+            Console.Write($"{positions[idx]}, {codes[idx]}, {names[idx]}, {quantities[idx]} кг., {dates[idx]}, {shelfLives[idx]}, tC={temperatures[idx]:F1}");
+            Console.WriteLine();
+        }
+    }
+
+    // Функция за търсене на изделие по код
+    static void SearchByCode(int n, string searchCode, string[] positions, string[] codes, 
+                            string[] names, int[] quantities, string[] dates, 
+                            int[] shelfLives, char[] groups, double[] temperatures)
+    {
+        int totalQuantity = 0;
+        double minTemperature = double.MaxValue;
+        bool isSpecial = false;
+        bool found = false;
+        
+        Console.WriteLine($"Резултати от търсенето за код: {searchCode}");
+        
+        for (int i = 0; i < n; i++)
+        {
+            if (codes[i].Equals(searchCode, StringComparison.OrdinalIgnoreCase))
+            {
+                found = true;
+                
+                // Извеждане на данните за намереното изделие
+                Console.Write($"{positions[i]}, {codes[i]}, {names[i]}, {quantities[i]} кг., {dates[i]}, {shelfLives[i]}");
+                if (groups[i] == 'S')
+                {
+                    Console.Write($", tC={temperatures[i]:F1}");
+                    isSpecial = true;
+                    // Обновяване на минималната температура
+                    if (temperatures[i] < minTemperature)
+                    {
+                        minTemperature = temperatures[i];
+                    }
+                }
+                Console.WriteLine();
+                
+                // Натрупване на общото количество
+                totalQuantity += quantities[i];
+            }
+        }
+        
+        if (found)
+        {
+            Console.WriteLine($"Общо количество: {totalQuantity} кг.");
+            if (isSpecial)
+            {
+                Console.WriteLine($"Минимална температура за съхранение: {minTemperature:F1}°C");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Не са намерени изделия с този код.");
+        }
+    }
+
+    // Помощна функция за размяна на стойности
+    static void Swap<T>(ref T a, ref T b)
+    {
+        T temp = a;
+        a = b;
+        b = temp;
+    }
+
+    // Помощна функция за парсване на дата от низ
+    static DateTime ParseDate(string date)
+    {
+        return DateTime.ParseExact(date, "dd.MM.yyyy", CultureInfo.InvariantCulture);
+    }
+}
