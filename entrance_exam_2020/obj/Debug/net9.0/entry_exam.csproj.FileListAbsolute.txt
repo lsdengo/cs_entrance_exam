@@ -1,0 +1,14 @@
+/home/jordan/Desktop/entry_exam/bin/Debug/net9.0/entry_exam
+/home/jordan/Desktop/entry_exam/bin/Debug/net9.0/entry_exam.deps.json
+/home/jordan/Desktop/entry_exam/bin/Debug/net9.0/entry_exam.runtimeconfig.json
+/home/jordan/Desktop/entry_exam/bin/Debug/net9.0/entry_exam.dll
+/home/jordan/Desktop/entry_exam/bin/Debug/net9.0/entry_exam.pdb
+/home/jordan/Desktop/entry_exam/obj/Debug/net9.0/entry_exam.GeneratedMSBuildEditorConfig.editorconfig
+/home/jordan/Desktop/entry_exam/obj/Debug/net9.0/entry_exam.AssemblyInfoInputs.cache
+/home/jordan/Desktop/entry_exam/obj/Debug/net9.0/entry_exam.AssemblyInfo.cs
+/home/jordan/Desktop/entry_exam/obj/Debug/net9.0/entry_exam.csproj.CoreCompileInputs.cache
+/home/jordan/Desktop/entry_exam/obj/Debug/net9.0/entry_exam.dll
+/home/jordan/Desktop/entry_exam/obj/Debug/net9.0/refint/entry_exam.dll
+/home/jordan/Desktop/entry_exam/obj/Debug/net9.0/entry_exam.pdb
+/home/jordan/Desktop/entry_exam/obj/Debug/net9.0/entry_exam.genruntimeconfig.cache
+/home/jordan/Desktop/entry_exam/obj/Debug/net9.0/ref/entry_exam.dll
